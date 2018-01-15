@@ -1,18 +1,22 @@
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { createLogger } from 'redux-logger';
-import mathReducer from './reducers/mathReducer'
-import userReducer from './reducers/userReducer'
-import thunk from 'redux-thunk';
-import promise from 'redux-promise-middleware';
+import React, { Component } from "react";
+import { render } from "react-dom";
+import { createStore, applyMiddleware } from "redux";
+import {
+  loadTranslations,
+  setLocale,
+  syncTranslationWithStore,
+  i18nReducer
+} from "react-redux-i18n";
+import { createLogger } from "redux-logger";
+import reducer from "./reducers/";
+import thunk from "redux-thunk";
+import promise from "redux-promise-middleware";
+import { translationsObject } from "./reducers/i18n";
 
-const store = createStore(combineReducers({
-    mathReducer,
-    userReducer
-  }),
-  {},
-  applyMiddleware(createLogger(), thunk, promise())
-);
+const middleware = applyMiddleware(createLogger(), thunk, promise());
+const store = createStore(reducer, {}, middleware);
 
+syncTranslationWithStore(store);
+store.dispatch(loadTranslations(translationsObject));
+store.dispatch(setLocale("en"));
 export default store;
